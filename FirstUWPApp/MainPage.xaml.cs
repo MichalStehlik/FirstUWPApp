@@ -30,17 +30,19 @@ namespace FirstUWPApp
         public string Text { get { return _text; } set { _text = value; NotifyPropertyChanged(); } }
         public double Size { get { return _size; } set { _size = value; NotifyPropertyChanged(); } }
 
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
         public MainPage()
         {
             Text = "Hello World";
             Size = 24;
+            DataContext = this;
             this.InitializeComponent();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

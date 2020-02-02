@@ -8,7 +8,6 @@
     xmlns:viewmodel="using:FirstUWPApp.ViewModel"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    x:Name="Main"
     >
     <Grid>
         <Grid.RowDefinitions>
@@ -18,15 +17,15 @@
         </Grid.RowDefinitions>
         <StackPanel>
             <TextBlock Text="Binding jiné komponenty" TextWrapping="Wrap" Margin="10,10,10,10"/>
-            <TextBox Text="TextBox" TextWrapping="Wrap" x:Name="InnerTextSource" />
+            <TextBox Text="Nazdar lidi" TextWrapping="Wrap" x:Name="InnerTextSource" />
             <Slider x:Name="InnerFontSize" Value="12" Minimum="10" Maximum="48" />
             <TextBlock Text="{Binding Text, ElementName=InnerTextSource}" TextWrapping="Wrap" FontSize="{Binding Value, ElementName=InnerFontSize}"/>
         </StackPanel>
         <StackPanel Grid.Row="1">
             <TextBlock Text="Binding lokální proměnné" TextWrapping="Wrap" Margin="10,10,10,10"/>
-            <TextBox Text="{Binding Text, ElementName=Main, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
-            <Slider Value="{Binding Size, ElementName=Main, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Minimum="10" Maximum="48" />
-            <TextBlock Text="{Binding Text, ElementName=Main}" TextWrapping="Wrap" FontSize="{Binding Size, ElementName=Main}"/>
+            <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
+            <Slider Value="{Binding Size, Mode=TwoWay}" Minimum="10" Maximum="48" />
+            <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="{Binding Size}"/>
         </StackPanel>
         <StackPanel Grid.Row="2">
             <StackPanel.DataContext>
@@ -34,7 +33,7 @@
             </StackPanel.DataContext>
             <TextBlock Text="Binding na ViewModel přes lokální DataContext" TextWrapping="Wrap" Margin="10,10,10,10"/>
             <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
-            <Slider Value="{Binding Size, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Minimum="10" Maximum="48" />
+            <Slider Value="{Binding Size, Mode=TwoWay}" Minimum="10" Maximum="48" />
             <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="{Binding Size}"/>
         </StackPanel>
 
