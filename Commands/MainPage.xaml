@@ -1,0 +1,30 @@
+﻿<Page
+    x:Class="Commands.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Commands"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="using:Commands.ViewModels"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.DataContext>
+        <viewmodel:MainViewModel />
+    </Page.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="64"/>
+            <RowDefinition Height="64"/>
+        </Grid.RowDefinitions>
+        <TextBlock Margin="10" Text="{Binding Number}" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="48"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Content="4" Margin="10" Grid.Row="2" VerticalAlignment="Center" Command="{Binding SetMax}" CommandParameter="4"/>
+            <Button Content="6" Margin="10" Grid.Row="2" VerticalAlignment="Center" Command="{Binding SetMax}" CommandParameter="6"/>
+            <Button Content="10" Margin="10" Grid.Row="2" VerticalAlignment="Center" Command="{Binding SetMax}" CommandParameter="10"/>
+            <TextBlock Text="{Binding Max}" VerticalAlignment="Center" Margin="10"/>
+        </StackPanel>
+        <Button Content="Roll" Margin="10" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding Roll}" />
+        
+    </Grid>
+</Page>
