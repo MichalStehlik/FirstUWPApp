@@ -1,0 +1,40 @@
+﻿<Page
+    x:Class="Converters.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Converters"
+    xmlns:viewmodels="using:Converters.ViewModels"
+    xmlns:converters="using:Converters.ViewModels.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" d:DesignWidth="997.227" d:DesignHeight="514.479">
+    <Page.Resources>
+        <converters:IntToStringName x:Key="IntNameConverter" />
+        <BitmapImage x:Key="img001" UriSource="/Assets/Portraits/001.jpg" />
+        <BitmapImage x:Key="img002" UriSource="/Assets/Portraits/002.jpg" />
+        <BitmapImage x:Key="img003" UriSource="/Assets/Portraits/003.jpg" />
+        <BitmapImage x:Key="img004" UriSource="/Assets/Portraits/004.jpg" />
+        <BitmapImage x:Key="img005" UriSource="/Assets/Portraits/005.jpg" />
+        <BitmapImage x:Key="img006" UriSource="/Assets/Portraits/006.jpg" />
+        <BitmapImage x:Key="img007" UriSource="/Assets/Portraits/007.jpg" />
+        <converters:IntToPortrait x:Key="IntPortraitConverter" Portrait1="{StaticResource img001}" Portrait2="{StaticResource img002}" Portrait3="{StaticResource img003}" Portrait4="{StaticResource img004}" Portrait5="{StaticResource img005}" Portrait6="{StaticResource img006}" Portrait7="{StaticResource img007}" />
+    </Page.Resources>
+    <Page.DataContext>
+        <viewmodels:MainViewModel/>
+    </Page.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64"/>
+            <RowDefinition Height="427*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Slider Margin="10" VerticalAlignment="Center" HorizontalAlignment="Stretch" Minimum="0" Maximum="6" Value="{Binding NameIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" LargeChange="1" />
+        <TextBlock Grid.Column="1" HorizontalAlignment="Center" Margin="10" Text="{Binding NameIndex, Converter={StaticResource IntNameConverter}}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+        <Image Grid.Column="0" HorizontalAlignment="Stretch" Margin="10" Grid.Row="1" VerticalAlignment="Top" Source="{Binding NameIndex, Converter={StaticResource IntPortraitConverter}}" Stretch="Uniform" />
+
+    </Grid>
+</Page>
