@@ -1,0 +1,47 @@
+﻿<Page
+    x:Class="ListBinding.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ListBinding"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="using:ListBinding.ViewModels"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.DataContext>
+        <viewmodel:MainViewModel />
+    </Page.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1">
+            <TextBlock HorizontalAlignment="Left" Text="Firstname" TextWrapping="Wrap" Margin="5"/>
+            <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Margin="5" Text="{Binding SelectedStudent.Firstname}" TextWrapping="Wrap" />
+            <TextBlock HorizontalAlignment="Left" Text="Lastname" TextWrapping="Wrap" Margin="5"/>
+            <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Margin="5" Grid.Row="1" Text="{Binding SelectedStudent.Lastname}" TextWrapping="Wrap" />
+            <TextBlock  HorizontalAlignment="Left" Text="Average Evaluation" TextWrapping="Wrap" Margin="5"/>
+            <TextBlock  HorizontalAlignment="Left" FontWeight="Bold" Margin="5" Grid.Row="1" Text="{Binding SelectedStudent.Average}" TextWrapping="Wrap" />
+            <TextBlock HorizontalAlignment="Left" Text="Gender" TextWrapping="Wrap" Margin="5" VerticalAlignment="Center"/>
+            <TextBlock  HorizontalAlignment="Left" FontWeight="Bold" Margin="5" Grid.Row="1" Text="{Binding SelectedStudent.Gender}" TextWrapping="Wrap" />
+            <TextBlock HorizontalAlignment="Left" Text="Examined" TextWrapping="Wrap" Margin="5" VerticalAlignment="Center"/>
+            <TextBlock  HorizontalAlignment="Left" FontWeight="Bold" Margin="5" Grid.Row="1" Text="{Binding SelectedStudent.Examined}" TextWrapping="Wrap" />
+        </StackPanel>
+        <ListBox Grid.Row="0" ItemsSource="{Binding Students}" SelectedIndex="{Binding SelectedStudentIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedStudent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.RowSpan="11"/>
+        <CommandBar DefaultLabelPosition="Right" ClosedDisplayMode="Compact"  Grid.Row="10" VerticalAlignment="Bottom">
+            <AppBarButton Icon="Add" Label="Add" Command="{Binding Add}"/>
+            <AppBarButton Icon="Delete" Label="Remove" Command="{Binding Remove}"/>
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+                    <TextBlock VerticalAlignment="Center" Margin="3" Text="{Binding SelectedStudentIndex}" />
+                    <TextBlock VerticalAlignment="Center" Margin="3" Text="/" />
+                    <TextBlock VerticalAlignment="Center" Margin="3" Text="{Binding Students.Count}" />
+                </StackPanel>
+            </CommandBar.Content>
+        </CommandBar>
+    </Grid>
+</Page>
