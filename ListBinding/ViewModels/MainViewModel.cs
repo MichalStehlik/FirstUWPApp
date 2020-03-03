@@ -27,12 +27,13 @@ namespace ListBinding.ViewModels
             Students.Add(new Student { Firstname = "Ctirad", Lastname = "Culík", Average = 1.4, Gender = Gender.Male, Examined = false });
             Students.Add(new Student { Firstname = "Daniela", Lastname = "Dvořáková", Average = 3.0, Gender = Gender.Female, Examined = false });
             Students.Add(new Student { Firstname = "Eva", Lastname = "Ebenová", Average = 3.0, Gender = Gender.Female, Examined = false });
+            Students.Add(new Student { Firstname = "Filip", Lastname = "Fiala", Average = 2.5, Gender = Gender.Other, Examined = true });
             Add = new RelayCommand(
                 () => { Students.Add(new Student { Firstname = "Nový", Lastname = "Student" }); },
                 () => true
             );
             Remove = new RelayCommand(
-                () => { Students.RemoveAt((int)SelectedStudentIndex); },
+                () => { Students.Remove(SelectedStudent); },
                 () => { return SelectedStudent != null; }
             );
         }

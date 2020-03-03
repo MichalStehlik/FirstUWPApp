@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ListBinding"
+    xmlns:conv="using:ListBinding.ViewModels.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodel="using:ListBinding.ViewModels"
@@ -11,6 +12,9 @@
     <Page.DataContext>
         <viewmodel:MainViewModel />
     </Page.DataContext>
+    <Page.Resources>
+        <conv:GenderToSymbolIcon x:Key="GenderToSymbolConverter" />
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -21,17 +25,33 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="1">
             <TextBlock HorizontalAlignment="Left" Text="Firstname" TextWrapping="Wrap" Margin="5"/>
-            <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Margin="5" Text="{Binding SelectedStudent.Firstname}" TextWrapping="Wrap" />
+            <TextBox HorizontalAlignment="Stretch" Margin="5" Text="{Binding SelectedStudent.Firstname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
             <TextBlock HorizontalAlignment="Left" Text="Lastname" TextWrapping="Wrap" Margin="5"/>
-            <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Margin="5" Grid.Row="1" Text="{Binding SelectedStudent.Lastname}" TextWrapping="Wrap" />
+            <TextBox HorizontalAlignment="Stretch" Margin="5" Grid.Row="1" Text="{Binding SelectedStudent.Lastname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
             <TextBlock  HorizontalAlignment="Left" Text="Average Evaluation" TextWrapping="Wrap" Margin="5"/>
-            <TextBlock  HorizontalAlignment="Left" FontWeight="Bold" Margin="5" Grid.Row="1" Text="{Binding SelectedStudent.Average}" TextWrapping="Wrap" />
+            <Slider HorizontalAlignment="Stretch" Margin="5" Grid.Row="1" Value="{Binding SelectedStudent.Average, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Minimum="1" Maximum="5" StepFrequency="0.1"/>
             <TextBlock HorizontalAlignment="Left" Text="Gender" TextWrapping="Wrap" Margin="5" VerticalAlignment="Center"/>
-            <TextBlock  HorizontalAlignment="Left" FontWeight="Bold" Margin="5" Grid.Row="1" Text="{Binding SelectedStudent.Gender}" TextWrapping="Wrap" />
-            <TextBlock HorizontalAlignment="Left" Text="Examined" TextWrapping="Wrap" Margin="5" VerticalAlignment="Center"/>
-            <TextBlock  HorizontalAlignment="Left" FontWeight="Bold" Margin="5" Grid.Row="1" Text="{Binding SelectedStudent.Examined}" TextWrapping="Wrap" />
+            <ComboBox HorizontalAlignment="Stretch" Margin="5" Grid.Row="1" SelectedItem="{Binding SelectedStudent.Gender, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Genders}"/>
+            <CheckBox IsChecked="{Binding Path=SelectedStudent.Examined, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" VerticalAlignment="Center">Examined</CheckBox>
         </StackPanel>
-        <ListBox Grid.Row="0" ItemsSource="{Binding Students}" SelectedIndex="{Binding SelectedStudentIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedStudent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.RowSpan="11"/>
+        <ListBox Grid.Row="0" ItemsSource="{Binding Students}" SelectedIndex="{Binding SelectedStudentIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedStudent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.RowSpan="11">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="*" MinWidth="150"/>
+                            <ColumnDefinition Width="*" MinWidth="150"/>
+                            <ColumnDefinition Width="30"/>
+                        </Grid.ColumnDefinitions>
+                        <SymbolIcon Symbol="{Binding Gender, Converter={StaticResource GenderToSymbolConverter}}" VerticalAlignment="Center"/>
+                        <CheckBox IsChecked="{Binding Path=Examined, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" VerticalAlignment="Center" Grid.Column="3"/>
+                        <TextBox Grid.Column="1" Text="{Binding Path=Firstname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" FontSize="14"/>
+                        <TextBox Grid.Column="2" Text="{Binding Path=Lastname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" FontSize="14"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <CommandBar DefaultLabelPosition="Right" ClosedDisplayMode="Compact"  Grid.Row="10" VerticalAlignment="Bottom">
             <AppBarButton Icon="Add" Label="Add" Command="{Binding Add}"/>
             <AppBarButton Icon="Delete" Label="Remove" Command="{Binding Remove}"/>

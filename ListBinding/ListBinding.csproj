@@ -125,6 +125,7 @@
     <Compile Include="Model\Gender.cs" />
     <Compile Include="Model\Student.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\Converters\GenderToSymbolIcon.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ParametrizedRelayCommand.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
