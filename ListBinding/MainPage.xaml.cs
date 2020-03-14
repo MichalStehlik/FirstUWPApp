@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ListBinding.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,9 +23,50 @@ namespace ListBinding
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private Windows.Storage.Pickers.FileOpenPicker _loadPicker = new Windows.Storage.Pickers.FileOpenPicker();
+        private Windows.Storage.Pickers.FileSavePicker _savePicker = new Windows.Storage.Pickers.FileSavePicker();
+        private MainViewModel _vm;
         public MainPage()
         {
-            this.InitializeComponent();
+            // co se má udělat před vytvořením formuláře
+            this.InitializeComponent(); // vytvoření formuláře
+            // co se má udělat po vytvoření formuláře
+            _vm = (MainViewModel)this.DataContext; // jak se dostat k DataContextu 
+        }
+
+        private async void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {          
+            _loadPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            _loadPicker.FileTypeFilter.Add(".students");
+            _loadPicker.FileTypeFilter.Add("*");
+            Windows.Storage.StorageFile file = await _loadPicker.PickSingleFileAsync();
+            if (file != null)
+            {
+                _vm.File = file; // uložení do DataContextu
+                if (_vm.Load.CanExecute(null))
+                {
+                    _vm.Load.Execute(null); // zavolání commandu 
+                };
+            }
+        }
+
+        private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            _savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            _savePicker.SuggestedSaveFile = _vm.File;
+            _savePicker.FileTypeChoices.Clear();
+            _savePicker.FileTypeChoices.Add("Students Data File", new List<string> { ".students" });
+            _savePicker.SuggestedFileName = "Studenti";
+            _savePicker.DefaultFileExtension = ".students";
+            Windows.Storage.StorageFile file = await _savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                _vm.File = file; // uložení do DataContextu
+                if (_vm.Save.CanExecute(null))
+                {
+                    _vm.Save.Execute(null);
+                };
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ListBinding.Model
 {
-    enum Gender
+    public enum Gender
     {
         Unknown = 0,
         Male = 1,

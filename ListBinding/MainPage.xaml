@@ -55,6 +55,8 @@
         <CommandBar DefaultLabelPosition="Right" ClosedDisplayMode="Compact"  Grid.Row="10" VerticalAlignment="Bottom">
             <AppBarButton Icon="Add" Label="Add" Command="{Binding Add}"/>
             <AppBarButton Icon="Delete" Label="Remove" Command="{Binding Remove}"/>
+            <AppBarButton Icon="OpenFile" Label="Open File" Click="AppBarButton_Click" />
+            <AppBarButton Icon="Save" Label="Save File" Click="AppBarButton_Click_1" />
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
                     <TextBlock VerticalAlignment="Center" Margin="3" Text="{Binding SelectedStudentIndex}" />

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ListBinding.Model
 {
-    class Student : INotifyPropertyChanged
+    public class Student : INotifyPropertyChanged // musí být public kvůli serializaci
     {
         private string _firstname;
         private string _lastname;
