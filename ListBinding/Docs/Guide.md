@@ -12,7 +12,7 @@ Předpokládáme, že už ovládáte:
 
 Nové vlastnosti jsou:
 * **[Nabindování seznamu](#bindovani-seznamu)** objektů mezi ViewModel a View tak, aby se přidání a odebrání prvku projevilo ve View
-* Postup, jakým způsobem udělat aby se v seznamu [projevovaly také **editace prvků**](#bindovani-prvku-seznamu)
+* Postup, jakým způsobem udělat aby se v seznamu [projevovaly také **editace prvků**](#bindování-prvku-seznamu)
 * **[DataTemplate](#datatemplate)** jako nastavení layoutu prvků seznamu
 * [Dialogy](#dialogy)
 * Práce se **[soubory](#soubory)** v UWP
@@ -51,11 +51,11 @@ V UWP i WPF je možné vytvořit šablonu pro to, jak mají vypadat nabindovaná
                 <ColumnDefinition Width="*" MinWidth="150"/>
                 <ColumnDefinition Width="*" MinWidth="150"/>
                 <ColumnDefinition Width="30"/>
-             </Grid.ColumnDefinitions>
-             <SymbolIcon Symbol="{Binding Gender, Converter={StaticResource GenderToSymbolConverter}}" VerticalAlignment="Center"/>
-             <CheckBox IsChecked="{Binding Path=Examined, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" VerticalAlignment="Center" Grid.Column="3"/>
-             <TextBox Grid.Column="1" Text="{Binding Path=Firstname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" FontSize="14"/>
-             <TextBox Grid.Column="2" Text="{Binding Path=Lastname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" FontSize="14"/>
+            </Grid.ColumnDefinitions>
+            <SymbolIcon Symbol="{Binding Gender, Converter={StaticResource GenderToSymbolConverter}}" VerticalAlignment="Center"/>
+            <CheckBox IsChecked="{Binding Path=Examined, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" VerticalAlignment="Center" Grid.Column="3"/>
+            <TextBox Grid.Column="1" Text="{Binding Path=Firstname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" FontSize="14"/>
+            <TextBox Grid.Column="2" Text="{Binding Path=Lastname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" FontSize="14"/>
         </Grid>
     </DataTemplate>
 </ListBox.ItemTemplate>
@@ -65,7 +65,62 @@ DataTemplate je často vhodné vložit do Page.Resources, jak je ukázáno v dok
 * [Item Containers and DataTemplates](https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/item-containers-templates)
 
 ## Dialogy
+Pokud chceme pracovat se soubory, měli bychom dát uživateli na vybranou jeho umístění. K tomu slouží systémové dialogy [FileOpenPicker](https://docs.microsoft.com/en-us/uwp/api/windows.storage.pickers.fileopenpicker) a [FileSavePicker](https://docs.microsoft.com/en-us/uwp/api/windows.storage.pickers.filesavepicker). Logicky tato dialogová okna budou spouštěna uživatelem z View a měla by se v samotném View také nacházet. Žádná taková vizuální komponenta ovšem není a budeme je tedy muset vytvářet. Globální data a samotné uložení do souboru se nachází ve ViewModelu a tak námi vytvořené dialogy bude nutné nějak propojit na ViewModel přes DataContext okna.
+
+Protože je nutné dialogová okna vytvořit, budeme to dělat po spuštění aplikace v tzv. *code behind*, to je soubor [MainPage.xaml.cs](../MainPage.xaml.cs). Zde je v konstruktoru příkaz, který vezme XAML a vytvoří z něj skutečné komponenty.
+```
+this.InitializeComponent();
+```
+Pod ním si už tedy můžeme vyzvednout a uložit DataContext. Ten si přetypujeme na konkrétní třídu MainView.
+```
+_vm = (MainViewModel)this.DataContext; 
+```
+Samotné dialogy budeme otevírat v reakci na událost kliknutí. To se dělá přes vlastnosti komponent pod ikonkou "blesku". Událost je "Click" a její obsluhu lze vytvořit pouhým poklepáním na pole ve vlastnostech komponent. Obsluha nahrávání dat pak vypadá takto:
+```
+private async void AppBarButton_Click(object sender, RoutedEventArgs e)
+{          
+    _loadPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+    _loadPicker.FileTypeFilter.Add(".students");
+    _loadPicker.FileTypeFilter.Add("*");
+    Windows.Storage.StorageFile file = await _loadPicker.PickSingleFileAsync();
+    if (file != null)
+    {
+         _vm.File = file; // uložení do DataContextu
+         if (_vm.Load.CanExecute(null))
+         {
+              _vm.Load.Execute(null); // zavolání commandu 
+         };
+    }
+}
+```
+První tři řádky nastavují vzhled dialogu. Na čtvrtém je dialog otevřen. Sedmý řádek předává proměnnou reprezentující soubor (StorageFile) do ViewModelu. Konečně osmý až jedenáctý řádek spouštějí Command ve ViewModelu.
+
+Podobně je pak nastaven i dialog pro ukládání souboru.
 
 ## Soubory
 
+Pro práci se soubory se používá proměnná typu `StorageFile` ve ViewModelu. Návod na [práci se soubory](https://docs.microsoft.com/en-us/windows/uwp/files/quickstart-reading-and-writing-files) poskytuje MSDN. 
+
+Víceméně pro malé soubory stačí jen 
+```
+await Windows.Storage.FileIO.WriteTextAsync(File, "Ahoj, světe");
+string serializedSourceText = await Windows.Storage.FileIO.ReadTextAsync(File);
+```
+pro větší je pak rozumné použít přístup před Stream.
+
 ## Serializace
+I když bychom mohli vytvořit nějaký vlastní formát pro ukládání souboru (v předchozím případě pracujeme s textovým souborem) už existuje hotový formát. Tím může být buď [XML](http://programujte.com/clanek/2007030501-xml-pro-zacatecniky-1-cast/) nebo [JSON](https://www.json.org/json-cz.html). Procesu převedení objektu na texovou reprezentaci se říká *serializace*, opačný postup je *deserializace*. 
+
+K serializaci dat použijeme balík *[Utf8Json](https://github.com/neuecc/Utf8Json)* nainstalovaný přes NuGet.
+```
+Install-Package Utf8Json
+```
+Kód pro serializaci a deserializaci dat vypadá takto:
+```
+string serializedData = JsonSerializer.ToJsonString(Students);
+Students = JsonSerializer.Deserialize<ObservableCollection<Student>>(serializedSourceText);
+```
+
+Nezapomeňme, že souborové operace a samotné serializace se nemusí podařit - soubor nemusí přístupný, formát dat nemusí být srozumitelný pro serializér. Proto by tyto části kódu měly být v chráněném bloku výjimky.
+
+Otevírat dialogové okno MessageDialog z ViewModelu je samozřejmě špatně, měl by být otevírán ve View. To ovšem není jednoduché a tak si to pro tentokrát odpustíme.
