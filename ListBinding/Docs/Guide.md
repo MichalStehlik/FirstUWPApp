@@ -12,13 +12,14 @@ Předpokládáme, že už ovládáte:
 
 Nové vlastnosti jsou:
 * **[Nabindování seznamu](#bindovani-seznamu)** objektů mezi ViewModel a View tak, aby se přidání a odebrání prvku projevilo ve View
-* Postup, jakým způsobem udělat aby se v seznamu projevovaly také **editace prvků**
-* **DataTemplate** jako nastavení layoutu prvků seznamu
-* Práce se **soubory** v UWP
-* **Serializování** objektů do JSON formátu
+* Postup, jakým způsobem udělat aby se v seznamu [projevovaly také **editace prvků**](#bindovani-prvku-seznamu)
+* **[DataTemplate](#datatemplate)** jako nastavení layoutu prvků seznamu
+* [Dialogy](#dialogy)
+* Práce se **[soubory](#soubory)** v UWP
+* **[Serializování](#serializace)** objektů do JSON formátu
 
 ## Bindování seznamu
-Už víme, že pokud se mají změny hodnot mezi View a ViewModelem vzájemně promítat, musí ViewModel (nebo jiný sledovaný objekt) implementovat rozhraní [INotyfyPropertyChanged](https://docs.microsoft.com/cs-cz/dotnet/api/system.componentmodel.inotifypropertychanged?view=netcore-3.1).
+Už víme, že pokud se mají změny hodnot mezi View a ViewModelem vzájemně promítat, musí ViewModel (nebo jiný sledovaný objekt) implementovat rozhraní [INotifyPropertyChanged](https://docs.microsoft.com/cs-cz/dotnet/api/system.componentmodel.inotifypropertychanged?view=netcore-3.1).
 Logickým krokem by tedy bylo dát mezi vlastnosti List<>. Je ale potřeba si uvědomit, že pak je ten List předáván a sledován referencí a celý mechanismus by pak viděl jen vytvoření, zrušení nebo nahrazení seznamu. Neprojevovalo by se například přidání prvku, protože by nedošlo ke změně adresy Listu a List samotný tuto informaci neumí signalizovat (neimplementuje INotifyPropertyChanged).
 
 Proto je nutné použít jinou kolekci, která umí signalizovat změnu svého stavu přes svoji událost *CollectionChanged*. Takovou kolekcí je [ObservableCollection<T>](https://docs.microsoft.com/cs-cz/dotnet/api/system.collections.objectmodel.observablecollection-1?view=netcore-3.1). Obecně by se daly vytvořit i jiné kolekcce, stačí, aby implementovaly INotifyCollectionChanged, INotifyPropertyChanged.
@@ -39,3 +40,32 @@ Observable Collection má v sobě ovšem jiné objekty. Jediná věc, kterou o s
 Pokud tedy dojde ke změně uvnitř objektu, ve View se neprojeví. Aby bylo možné tyto změny sledovat musí objekt v kolekci také implementovat INotifyPropertyChanged. Proto je objekt [Student](../Model/Student.cs) napsán na první pohled složitě.
 
 ## DataTemplate
+V UWP i WPF je možné vytvořit šablonu pro to, jak mají vypadat nabindovaná data. V našem případě je to ItemTemplate v ListBoxu. Díky tomu jsou prvky seznamu živé a je možné je editovat přímo v seznamu. ItemTemplate se skládá z nějakého kontejneru a jeho nabindovaných částí.
+
+```
+<ListBox.ItemTemplate>
+    <DataTemplate>
+        <Grid HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="*" MinWidth="150"/>
+                <ColumnDefinition Width="*" MinWidth="150"/>
+                <ColumnDefinition Width="30"/>
+             </Grid.ColumnDefinitions>
+             <SymbolIcon Symbol="{Binding Gender, Converter={StaticResource GenderToSymbolConverter}}" VerticalAlignment="Center"/>
+             <CheckBox IsChecked="{Binding Path=Examined, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" VerticalAlignment="Center" Grid.Column="3"/>
+             <TextBox Grid.Column="1" Text="{Binding Path=Firstname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" FontSize="14"/>
+             <TextBox Grid.Column="2" Text="{Binding Path=Lastname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5" FontSize="14"/>
+        </Grid>
+    </DataTemplate>
+</ListBox.ItemTemplate>
+```
+DataTemplate je často vhodné vložit do Page.Resources, jak je ukázáno v dokumentaci.
+
+* [Item Containers and DataTemplates](https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/item-containers-templates)
+
+## Dialogy
+
+## Soubory
+
+## Serializace
