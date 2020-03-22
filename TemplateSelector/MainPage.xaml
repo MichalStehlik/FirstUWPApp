@@ -1,0 +1,109 @@
+﻿<Page
+    x:Class="TemplateSelector.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:TemplateSelector"
+    xmlns:viewmodel="using:TemplateSelector.ViewModels"
+    xmlns:view="using:TemplateSelector.ViewHelpers"
+    xmlns:converters="using:TemplateSelector.ViewModels.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.DataContext>
+        <viewmodel:MainViewModel />
+    </Page.DataContext>
+    <Page.Resources>
+        <converters:GenderToColorConverter x:Key="GenderColorConverter" Man="CadetBlue" Woman="HotPink"/>
+        <view:PersonTemplateSelector x:Key="PersonTemplateSelector" TeacherTemplate="{StaticResource TeacherTemplate}" StudentTemplate="{StaticResource StudentTemplate}" PersonTemplate="{StaticResource PersonTemplate}" />
+        <Style x:Key="PersonName" TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+            <Setter Property="Padding" Value="0,0,0,0" />
+        </Style>
+        <ControlTemplate TargetType="Button" x:Key="MailButton">
+            <Border x:Name="MailButtonBorder" CornerRadius="5" BorderThickness="1" Background="Gold" BorderBrush="Black" Padding="3">
+                <ContentPresenter x:Name="MyContent" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+        </ControlTemplate>
+        <DataTemplate x:Key="PersonTemplate">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Firstname}" Style="{StaticResource PersonName}" Foreground="{Binding Gender, Converter={StaticResource GenderColorConverter}}" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding Lastname}" Style="{StaticResource PersonName}" Foreground="{Binding Gender, Converter={StaticResource GenderColorConverter}}"/>
+                </StackPanel>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Email}" />
+                <StackPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Template="{StaticResource MailButton}" Tag="{Binding Email}" Click="Email_Click">Email</Button>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="TeacherTemplate">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Background="{Binding Gender, Converter={StaticResource GenderColorConverter}}" Width="50" Height="50" Margin="3,3,10,3">
+                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Text="{Binding Shortname}" Margin="0,0,0,0"></TextBlock>
+                </Border>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Firstname}" Style="{StaticResource PersonName}" Foreground="{Binding Gender, Converter={StaticResource GenderColorConverter}}" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding Lastname}" Style="{StaticResource PersonName}" Foreground="{Binding Gender, Converter={StaticResource GenderColorConverter}}"/>
+                </StackPanel>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Email}" />
+                <StackPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Template="{StaticResource MailButton}" Tag="{Binding Email}" Click="Email_Click">Email</Button>
+                    <Button Click="Teacher_Click" Tag="{Binding Shortname}">Rozvrh učitele</Button>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="StudentTemplate">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid Width="50" Height="50" Grid.RowSpan="2">
+                    <Ellipse Fill="{Binding Gender, Converter={StaticResource GenderColorConverter}}" Margin="3"/>
+                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Text="{Binding Classname}" Margin="0,0,0,0"></TextBlock>
+                </Grid>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Firstname}" Style="{StaticResource PersonName}" Foreground="{Binding Gender, Converter={StaticResource GenderColorConverter}}" Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding Lastname}" Style="{StaticResource PersonName}" Foreground="{Binding Gender, Converter={StaticResource GenderColorConverter}}"/>
+                </StackPanel>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Email}" />
+                <StackPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Template="{StaticResource MailButton}" Tag="{Binding Email}" Click="Email_Click">Email</Button>
+                    <Button Click="Class_Click" Tag="{Binding Classname}">Rozvrh třídy</Button>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid>
+        <ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding Persons}" SelectedItem="{Binding SelectedPerson}" SelectedIndex="{Binding SelectedPersonIndex}" ItemTemplateSelector="{StaticResource PersonTemplateSelector}"/>
+    </Grid>
+</Page>
